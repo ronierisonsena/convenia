@@ -1,37 +1,37 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  app:
+  api:
     build:
-      context: ./docker/php
+      context: .
+      dockerfile: ./docker/php/Dockerfile
     container_name: convenia_swoole_api
-    working_dir: /var/www
+    working_dir: /var/www/html/api
     volumes:
-      - ./api:/var/www
+      - ./api:/var/www/html/api
     ports:
-      - 8000:8000
+      - "8000:8000"
     environment:
-      - DB_HOST=db
-      - DB_DATABASE=convenia
-      - DB_USER=root
-      - DB_PASSWORD=root
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
     depends_on:
-      - database
-    command: bash -c "composer install && php artisan octane:start --server=swoole --host=0.0.0.0 --port=8000"
+      - mysql
+    command: ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000", "--watch"]
 
-  database:
-    image: mariadb:10.11
-    container_name: convenia_database
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD:root
-      - MYSQL_DATABASE:convenia
-      - MYSQL_USER:root
-      - MYSQL_PASSWORD:root
-    volumes:
-      - ./docker/database:/var/lib/mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: convenia
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     ports:
-      - 3306:3306
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
 
 volumes:
-  database:
+  db_data:

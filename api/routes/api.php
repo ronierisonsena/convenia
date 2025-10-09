@@ -1,12 +1,18 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\v1\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', function (Request $request) {
-    return 'ok';
-});
+Route::group(['prefix' => 'v1', 'name' => 'v1'], function () {
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    Route::post('/register', [AuthController::class, 'register'])->name('.register');
+    Route::post('/login', [AuthController::class, 'login'])->name('.login');
+
+    /**
+     * Authenticated routes
+     */
+    Route::middleware('auth:passport')->group(function () {
+        Route::get('/user', [AuthController::class, 'me'])->name('.me');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('.logout');
+    });
+});
