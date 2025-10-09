@@ -12,6 +12,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @OA\Info (
+ *     title="Collaborators API",
+ *     version="1.0.0",
+ *     description="API for manage collaborators"
+ * )
+ */
 class AuthController extends Controller
 {
     public function __construct(
@@ -19,7 +26,16 @@ class AuthController extends Controller
     ) {}
 
     /**
-     * Register new collaborator
+     * @OA\Post(
+     *     path="/api/v1/register",
+     *     tags={"Collaborator"},
+     *     summary="Create a new collaborator",
+     *
+     *     @OA\Response(
+     *          response=201,
+     *          description="Created user"
+     *     )
+     * )
      *
      * @return UserResource|JsonResponse
      */
