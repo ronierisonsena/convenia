@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Repositories\UserTypeRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -16,20 +17,18 @@ class UserService extends BaseService
      */
     public function __construct(
         private UserRepository $userRepository,
+        private UserTypeRepository $userTypeRepository,
     ) {}
 
     /**
      * Register new user
-     *
-     * @return User|null
      */
-    public function register(array $data): ?User
+    public function store(array $data): ?User
     {
         $data['cpf'] = $this->onlyNumbers($data['cpf']);
 
         $user = $this->createUser($data);
-
-        $this->createToken($user);
+        $user->createAccessToken();
 
         return $user;
     }
@@ -44,7 +43,7 @@ class UserService extends BaseService
         }
 
         $user = Auth::user();
-        $this->createToken($user);
+        $user->createAccessToken();
 
         return $user;
     }
@@ -52,8 +51,11 @@ class UserService extends BaseService
     /**
      * Create User
      */
-    private function createUser(array $data): Model
+    public function createUser(array $data): Model
     {
+        $userType = $this->userTypeRepository
+            ->findBy('role', data_get($data, 'type', 'staff'));
+
         return $this->userRepository->create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -61,14 +63,7 @@ class UserService extends BaseService
             'city' => $data['city'],
             'state' => $data['state'],
             'password' => Hash::make($data['password']),
+            'user_type_id' => $userType->id,
         ]);
-    }
-
-    /**
-     * Create accessToken for user
-     */
-    private function createToken(User &$user): void
-    {
-        $user->accessToken = $user->createToken($user->id.'_token')->accessToken;
     }
 }

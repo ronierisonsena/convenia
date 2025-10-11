@@ -3,9 +3,15 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Laravel\Passport\Exceptions\AuthenticationException;
+use Laravel\Passport\Exceptions\MissingScopeException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,16 +24,38 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->respond(function (Response|RedirectResponse $response, Throwable $e) {
-            $message = $e->getMessage();
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if ($request->is('api/*')) {
+                [$status, $message] = match (true) {
+                    $e instanceof NotFoundHttpException,
+                    $e instanceof RouteNotFoundException => [Response::HTTP_NOT_FOUND, 'Resource not found.'],
+                    $e instanceof ValidationException => [Response::HTTP_UNPROCESSABLE_ENTITY, $e->errors()],
+                    $e instanceof AuthenticationException => [Response::HTTP_FORBIDDEN, 'Unauthenticated or privileges missing.'],
+                    $e instanceof MissingScopeException,
+                    $e instanceof AccessDeniedHttpException => [Response::HTTP_FORBIDDEN, 'Privileges missing.'],
+                    default => [Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage()],
+                };
 
-            if ($e instanceof NotFoundHttpException) {
-                $message = 'Resource not found.';
+                Log::error($e->getMessage(), [
+                    'message' => $message,
+                    'exception' => get_class($e),
+                    'trace' => collect($e->getTrace())->take(5),
+                ]);
+
+                $response['message'] = 'Error processing request.';
+
+                // Add exception and trace for dev
+                if (! app()->environment('production')) {
+                    $response['message'] = $message;
+                    $response['exception'] = get_class($e);
+                    $response['trace'] = collect($e->getTrace())->take(3);
+                }
+
+                return response()->json($response, $status);
             }
-
-            return response()->json([
-                'message' => $message,
-            ]);
         });
 
+        $exceptions->respond(function ($response, Throwable $e) {
+            return $response;
+        });
     })->create();

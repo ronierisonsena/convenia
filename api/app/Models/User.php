@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,6 +22,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'user_type_id',
         'name',
         'email',
         'password',
@@ -50,5 +53,37 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function type()
+    {
+        return $this->belongsTo(UserType::class, 'user_type_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'user_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function manager()
+    {
+        return $this->hasOne(Manager::class, 'user_id');
+    }
+
+    /**
+     * Create a passport access token for user
+     */
+    public function createAccessToken()
+    {
+        $this->newToken = $this->createToken($this->id.'_token', [$this->type->role])->accessToken;
     }
 }

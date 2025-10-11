@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_type_id')->references('id')->on('user_types');
             $table->string('name', 255);
+            $table->string('email')->unique();
             $table->string('cpf', 11);
             $table->string('city', 120);
             $table->string('state', 120);
-            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

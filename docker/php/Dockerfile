@@ -22,10 +22,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html/api
 
-COPY ./api /var/www/html/api
+COPY ./api /var/www/html
 
-RUN composer install --no-interaction --prefer-dist --no-scripts --no-autoloader \
-    && composer dump-autoload
+#RUN composer install --no-interaction --prefer-dist --no-scripts --no-autoloader \
+#   && composer dump-autoload
 
 RUN npm init -y && npm install chokidar
 
