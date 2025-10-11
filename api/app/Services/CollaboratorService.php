@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Repositories\CollaboratorRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\UserTypeRepository;
+use Illuminate\Support\Collection;
 
 class CollaboratorService extends BaseService
 {
@@ -36,6 +37,32 @@ class CollaboratorService extends BaseService
         $user->createAccessToken();
 
         return $user;
+    }
+
+    /**
+     * Get all collaborators
+     */
+    public function index(User $user, array $filters): ?Collection
+    {
+        $filters = ! empty($filters) ? $this->prepareFilters($filters) : [];
+
+        return $this->collaboratorRepository->getStaffByManagerWithFilters($user->manager?->id, $filters);
+    }
+
+    /**
+     * Prepare filters
+     * 
+     * @return array
+     */
+    public function prepareFilters(array $filters): array
+    {
+        $where = [];
+
+        foreach ($filters as $key => $value) {
+            $where[] = [$key, 'REGEXP', $value];
+        }
+
+        return $where;
     }
 
     /**

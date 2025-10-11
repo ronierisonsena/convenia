@@ -7,9 +7,6 @@ use Throwable;
 
 class BaseController extends Controller
 {
-    /**
-     * @param Throwable $e
-     */
     public function saveExceptionLog(Throwable $e): void
     {
         Log::error($e->getMessage(), [

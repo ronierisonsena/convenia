@@ -37,10 +37,10 @@ class StaffResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'user' => UserResource::make($this->resource->user)->setToken($this->newAccessToken),
+            'user' => UserResource::make($this->resource)->setToken($this->newAccessToken),
             'manager' => [
-                'name' => $this->resource->manager->user->name,
-                'email' => $this->resource->manager->user->email,
+                'name' => $this->resource->manager?->user->name,
+                'email' => $this->resource->manager?->user->email,
             ],
         ];
     }

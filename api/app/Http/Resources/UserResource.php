@@ -62,7 +62,7 @@ class UserResource extends JsonResource
             'city' => $this->resource->city,
             'state' => $this->resource->state,
             'created_at' => $this->resource->created_at->format('Y-m-d H:m:i'),
-            'type' => $this->resource->type->role,
+            'type' => $this->resource->type?->role,
             'token' => $this->newAccessToken,
         ];
     }

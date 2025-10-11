@@ -20,4 +20,16 @@ abstract class BaseRepository
     {
         return $this->model->where($attribute, $value)->firstOrFail();
     }
+
+    public function getByAttributes(array $attributesValues, $operator = '='): mixed
+    {
+        $where = [];
+
+        foreach ($attributesValues as $key => $arrayAttributeValue) {
+            $operator = count($arrayAttributeValue) == 3 ? $arrayAttributeValue[1] : $operator;
+            $where[] = [$arrayAttributeValue[0], $operator, $arrayAttributeValue[2]];
+        }
+
+        return $this->model->where($where)->get();
+    }
 }
