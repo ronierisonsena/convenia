@@ -84,6 +84,6 @@ class User extends Authenticatable
      */
     public function createAccessToken()
     {
-        $this->newToken = $this->createToken($this->id.'_token', [$this->type->role])->accessToken;
+        $this->newAccessToken = $this->createToken($this->id.'_token', [$this->type->role])->accessToken;
     }
 }

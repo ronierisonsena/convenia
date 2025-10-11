@@ -64,7 +64,7 @@ class CollaboratorRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|min:5',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|max:150',
             'cpf' => [
                 'required',
                 'string',

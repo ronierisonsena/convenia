@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
+use App\Http\Requests\LoginRequest;
 use App\Http\Resources\ManagerResource;
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
@@ -10,7 +11,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
@@ -25,7 +25,7 @@ use Throwable;
  *     description="Endpoints for user authentication"
  * )
  */
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     public function __construct(
         private UserService $userService,
@@ -74,25 +74,21 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
         try {
-            $credentials = $request->only('email', 'password');
+            $credentials = $request->validated();
             $user = $this->userService->login($credentials);
 
             return (new UserResource($user))
-                ->setToken($user->newToken)
+                ->setToken($user->newAccessToken)
                 ->additional([
                     'message' => __('responses.login_successful'),
                 ])
                 ->response()
                 ->setStatusCode(Response::HTTP_OK);
         } catch (Exception $e) {
-            Log::error($e->getMessage(), [
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'trace' => collect($e->getTrace())->take(5),
-            ]);
+            $this->saveExceptionLog($e);
 
             return response()->json([
                 'message' => __('responses.error_on_request'),
@@ -138,11 +134,7 @@ class AuthController extends Controller
                 'message' => __('responses.logout'),
             ]);
         } catch (Exception $e) {
-            Log::error($e->getMessage(), [
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'trace' => collect($e->getTrace())->take(5),
-            ]);
+            $this->saveExceptionLog($e);
 
             return response()->json([
                 'message' => __('responses.error_on_request'),
@@ -187,11 +179,7 @@ class AuthController extends Controller
                 ->response()
                 ->setStatusCode(Response::HTTP_OK);
         } catch (Throwable $e) {
-            Log::error($e->getMessage(), [
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'trace' => collect($e->getTrace())->take(5),
-            ]);
+            $this->saveExceptionLog($e);
 
             return response()->json([
                 'message' => __('responses.error_on_request'),

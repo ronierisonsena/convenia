@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\V1\Collaborator;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\CollaboratorRequest;
 use App\Http\Resources\ManagerResource;
 use App\Http\Resources\StaffResource;
@@ -10,10 +10,9 @@ use App\Http\Resources\UserResource;
 use App\Services\CollaboratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class StoreCollaboratorController extends Controller
+class StoreCollaboratorController extends BaseController
 {
     /**
      * StoreCollaboratorController constructor.
@@ -85,26 +84,22 @@ class StoreCollaboratorController extends Controller
     public function __invoke(CollaboratorRequest $request): JsonResponse
     {
         try {
-            $user = auth()->user();
             $data = $request->validated();
+            $user = auth()->user();
             $data['manager_id'] = $user?->manager?->id;
 
             $user = $this->collaboratorService->store($data);
 
             $model = match ($user->type->role) {
-                'manager' => (new ManagerResource($user->manager))->setToken($user->newToken),
-                'staff' => (new StaffResource($user->staff))->setToken($user->newToken),
+                'manager' => (new ManagerResource($user->manager))->setToken($user->newAccessToken),
+                'staff' => (new StaffResource($user->staff))->setToken($user->newAccessToken),
             };
 
             return $model->additional(['message' => __('responses.collaborator.created')])
                 ->response()
                 ->setStatusCode(Response::HTTP_CREATED);
         } catch (Throwable $e) {
-            Log::error($e->getMessage(), [
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'trace' => collect($e->getTrace())->take(5),
-            ]);
+            $this->saveExceptionLog($e);
 
             return response()->json([
                 'message' => __('responses.error_on_request'),
