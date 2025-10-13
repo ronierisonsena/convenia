@@ -14,7 +14,7 @@ use Throwable;
 class UpdateCollaboratorController extends BaseController
 {
     /**
-     * StoreCollaboratorController constructor.
+     * UpdateCollaboratorController constructor.
      */
     public function __construct(
         private CollaboratorService $collaboratorService,

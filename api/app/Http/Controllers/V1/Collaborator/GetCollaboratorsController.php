@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1\Collaborator;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\GetCollaboratorRequest;
 use App\Http\Resources\StaffResource;
-use App\Http\Resources\UserResource;
 use App\Services\CollaboratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -14,7 +13,7 @@ use Throwable;
 class GetCollaboratorsController extends BaseController
 {
     /**
-     * StoreCollaboratorController constructor.
+     * GetCollaboratorController constructor.
      */
     public function __construct(
         private CollaboratorService $collaboratorService,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DestroyCollaboratorController;
 use App\Http\Controllers\UpdateCollaboratorController;
 use App\Http\Controllers\V1\AuthController;
 use App\Http\Controllers\V1\Collaborator\GetCollaboratorsController;
@@ -19,11 +20,15 @@ Route::group(['prefix' => 'v1', 'name' => 'v1'], function () {
 
             Route::post('/', StoreCollaboratorController::class)
                 ->middleware([CheckToken::using(['manager'])])
-                ->name('.collaborator.store');
+                ->name('.store');
 
             Route::put('/{collaborator}', UpdateCollaboratorController::class)
                 ->middleware([CheckToken::using(['manager'])])
-                ->name('.collaborator.update');
+                ->name('.update');
+
+            Route::delete('/{collaborator}', DestroyCollaboratorController::class)
+                ->middleware([CheckToken::using(['manager'])])
+                ->name('.destroy');
         });
 
         Route::get('/collaborators', GetCollaboratorsController::class)

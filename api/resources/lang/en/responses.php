@@ -9,5 +9,6 @@ return [
         'created' => 'Staff created successfully.',
         'index' => 'Get collaborators.',
         'updated' => 'Collaborator updated successfully.',
+        'deleted' => 'Collaborator deleted successfully.',
     ],
 ];

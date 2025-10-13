@@ -72,6 +72,14 @@ class CollaboratorService extends BaseService
     }
 
     /**
+     * Delete a collaborator
+     */
+    public function destroy(User $user)
+    {
+        $user->delete();
+    }
+
+    /**
      * Prepare filters
      */
     private function prepareFilters(array $filters): array
