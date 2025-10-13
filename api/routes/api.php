@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UpdateCollaboratorController;
 use App\Http\Controllers\V1\AuthController;
 use App\Http\Controllers\V1\Collaborator\GetCollaboratorsController;
 use App\Http\Controllers\V1\Collaborator\StoreCollaboratorController;
@@ -14,17 +15,25 @@ Route::group(['prefix' => 'v1', 'name' => 'v1'], function () {
      * Authenticated routes
      */
     Route::middleware('auth:passport')->group(function () {
-        Route::post('/collaborator', StoreCollaboratorController::class)
-            ->middleware([CheckToken::using(['manager'])])
-            ->name('.collaborator.store');
+        Route::group(['prefix' => 'collaborator', 'name' => '.collaborator'], function () {
+
+            Route::post('/', StoreCollaboratorController::class)
+                ->middleware([CheckToken::using(['manager'])])
+                ->name('.collaborator.store');
+
+            Route::put('/{collaborator}', UpdateCollaboratorController::class)
+                ->middleware([CheckToken::using(['manager'])])
+                ->name('.collaborator.update');
+        });
 
         Route::get('/collaborators', GetCollaboratorsController::class)
             ->middleware([CheckToken::using(['manager'])])
             ->name('.collaborators');
 
-        Route::get('/user', [AuthController::class, 'me'])
+        Route::post('/logout', [AuthController::class, 'logout'])->name('.logout');
+
+        Route::get('/me', [AuthController::class, 'me'])
             ->middleware(CheckToken::using(['manager']))
             ->name('.me');
-        Route::post('/logout', [AuthController::class, 'logout'])->name('.logout');
     });
 });

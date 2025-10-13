@@ -7,9 +7,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\Schema(
- *     schema="CollaboratorRequest",
+ *     schema="StoreCollaboratorRequest",
  *     type="object",
- *     title="Collaborator Request",
+ *     title="Store Collaborator Request",
  *     required={"name", "email", "password", "cpf", "city", "state"},
  *
  *     @OA\Property(
@@ -44,7 +44,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *     ),
  * )
  */
-class CollaboratorRequest extends FormRequest
+class StoreCollaboratorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -81,12 +81,19 @@ class CollaboratorRequest extends FormRequest
 
     public function messages()
     {
-        $userTypesRepository = app()->make(UserTypeRepository::class);
-        $roles = implode(' | ', $userTypesRepository->model->all()->pluck('role')->toArray());
-
         return [
             'cpf.regex' => 'Invalid CPF. Acceptable formats are: 000.000.000-00 | 00000000000',
-            'type.exists' => 'Invalid type. Acceptable types are: '.$roles,
+            'type.exists' => 'Invalid type. Acceptable types are: '.$this->getAllowedRoles(),
         ];
+    }
+
+    /**
+     * Return string all roles
+     */
+    private function getAllowedRoles(): string
+    {
+        $userTypesRepository = app()->make(UserTypeRepository::class);
+
+        return implode(' | ', $userTypesRepository->model->all()->pluck('role')->toArray());
     }
 }

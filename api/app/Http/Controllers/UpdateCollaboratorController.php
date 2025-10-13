@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\V1\Collaborator;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\BaseController;
-use App\Http\Requests\StoreCollaboratorRequest;
-use App\Http\Resources\ManagerResource;
-use App\Http\Resources\StaffResource;
+use App\Http\Requests\UpdateCollaboratorRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Services\CollaboratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Throwable;
 
-class StoreCollaboratorController extends BaseController
+class UpdateCollaboratorController extends BaseController
 {
     /**
      * StoreCollaboratorController constructor.
@@ -22,23 +21,29 @@ class StoreCollaboratorController extends BaseController
     ) {}
 
     /**
-     * @OA\Post(
-     *     path="/api/v1/collaborator",
+     * @OA\Put(
+     *     path="/api/v1/collaborator/{id}",
      *     tags={"Collaborator"},
-     *     summary="Create a new collaborator",
+     *     summary="Update a collaborator",
      *     security={{"bearer": {}}},
      *
-     *     @OA\RequestBody(
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
      *          required=true,
+     *          description="User ID"
+     *     ),
      *
-     *          @OA\JsonContent(ref="#/components/schemas/StoreCollaboratorRequest")
+     *     @OA\RequestBody(
+     *
+     *          @OA\JsonContent(ref="#/components/schemas/UpdateCollaboratorRequest")
      *     ),
      *
      *     @OA\Response(
-     *          response=201,
-     *          description="Created",
+     *          response=200,
+     *          description="Collaborator updated.",
      *
-     *          @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *          @OA\JsonContent(ref="#/components/schemas/UserResource"),
      *     ),
      *
      *     @OA\Response(
@@ -66,10 +71,6 @@ class StoreCollaboratorController extends BaseController
      *     ),
      *
      *     @OA\Response(
-     *          response=404,
-     *          description="Resource not found",
-     *     ),
-     *     @OA\Response(
      *          response=500,
      *          description="Internal server error",
      *
@@ -85,21 +86,14 @@ class StoreCollaboratorController extends BaseController
      *     )
      * )
      */
-    public function __invoke(StoreCollaboratorRequest $request): JsonResponse
+    public function __invoke(UpdateCollaboratorRequest $request, User $collaborator): JsonResponse
     {
         try {
-            $data = $request->validated();
             $user = auth()->user();
-            $data['manager_id'] = $user?->manager?->id;
+            $data = Arr::except($request->validated(), ['collaborator']);
+            $userCollaborator = $this->collaboratorService->update($data, $collaborator, $user);
 
-            $user = $this->collaboratorService->store($data);
-
-            $resource = match ($user->type->role) {
-                'manager' => (new ManagerResource($user->manager))->setToken($user->newAccessToken),
-                'staff' => (new StaffResource($user->staff))->setToken($user->newAccessToken),
-            };
-
-            return $resource->additional(['message' => __('responses.collaborator.created')])
+            return (new UserResource($userCollaborator))->additional(['message' => __('responses.collaborator.updated')])
                 ->response()
                 ->setStatusCode(Response::HTTP_CREATED);
         } catch (Throwable $e) {

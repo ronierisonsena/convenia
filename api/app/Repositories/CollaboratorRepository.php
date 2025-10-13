@@ -14,9 +14,6 @@ class CollaboratorRepository extends BaseRepository
         protected User $model,
     ) {}
 
-    /**
-     * @return mixed
-     */
     public function getStaffByManagerWithFilters(int $managerId, array $filters = []): Collection
     {
         return $this->model
@@ -24,5 +21,14 @@ class CollaboratorRepository extends BaseRepository
             ->join('staff', 'staff.user_id', '=', 'users.id')
             ->where('staff.manager_id', $managerId)
             ->get();
+    }
+
+    public function updateStaffByManagerId(int $managerId, array $data, int $collaboratorUserId): void
+    {
+        $this->model
+            ->join('staff', 'staff.user_id', '=', 'users.id')
+            ->where('staff.manager_id', $managerId)
+            ->where('users.id', $collaboratorUserId)
+            ->update($data);
     }
 }

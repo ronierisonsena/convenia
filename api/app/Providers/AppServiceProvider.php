@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use L5Swagger\L5SwaggerServiceProvider;
 use Laravel\Passport\Passport;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,13 +29,17 @@ class AppServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(CarbonInterval::months(1));
         Passport::enablePasswordGrant();
 
-        if (! Schema::hasTable('user_types')) {
-            return;
+        try {
+            if (! Schema::hasTable('user_types')) {
+                return;
+            }
+
+            $userTypesRepository = app()->make(UserTypeRepository::class);
+            $scopes = $userTypesRepository->model->all()->pluck('description', 'role')->toArray();
+
+            Passport::tokensCan($scopes);
+        } catch (Throwable $e) {
+            //
         }
-
-        $userTypesRepository = app()->make(UserTypeRepository::class);
-        $scopes = $userTypesRepository->model->all()->pluck('description', 'role')->toArray();
-
-        Passport::tokensCan($scopes);
     }
 }

@@ -64,11 +64,11 @@ class GetCollaboratorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:80',
-            'email' => 'sometimes|string|max:80',
-            'cpf' => 'sometimes|string|max:80',
-            'city' => 'sometimes|string|max:80',
-            'state' => 'sometimes|string|max:80',
+            'name' => 'sometimes|string|max:30',
+            'email' => 'sometimes|string|max:30',
+            'cpf' => 'sometimes|string|max:14',
+            'city' => 'sometimes|string|max:30',
+            'state' => 'sometimes|string|max:30',
         ];
     }
 }

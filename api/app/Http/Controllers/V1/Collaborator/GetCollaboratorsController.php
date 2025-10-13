@@ -31,6 +31,7 @@ class GetCollaboratorsController extends BaseController
      *          name="name",
      *          in="query",
      *          description="",
+     *
      *          @OA\Schema(type="string", example="Ted Rubber")
      *     ),
      *
@@ -38,6 +39,7 @@ class GetCollaboratorsController extends BaseController
      *          name="email",
      *          in="query",
      *          description="",
+     *
      *          @OA\Schema(type="string", example="test@email.com")
      *     ),
      *
@@ -45,6 +47,7 @@ class GetCollaboratorsController extends BaseController
      *          name="cpf",
      *          in="query",
      *          description="",
+     *
      *          @OA\Schema(type="string", example="111.222.333-45")
      *     ),
      *
@@ -52,6 +55,7 @@ class GetCollaboratorsController extends BaseController
      *          name="city",
      *          in="query",
      *          description="",
+     *
      *          @OA\Schema(type="string", example="Belo Horizonte")
      *     ),
      *
@@ -59,6 +63,7 @@ class GetCollaboratorsController extends BaseController
      *          name="state",
      *          in="query",
      *          description="",
+     *
      *          @OA\Schema(type="string", example="Minas Gerais")
      *     ),
      *
@@ -69,6 +74,10 @@ class GetCollaboratorsController extends BaseController
      *          @OA\JsonContent(ref="#/components/schemas/UserResource")
      *     ),
      *
+     *     @OA\Response(
+     *          response=404,
+     *          description="Resource not found",
+     *     ),
      *     @OA\Response(
      *          response=422,
      *          description="Unprocessable entity",

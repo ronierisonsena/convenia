@@ -21,15 +21,16 @@ abstract class BaseRepository
         return $this->model->where($attribute, $value)->firstOrFail();
     }
 
-    public function getByAttributes(array $attributesValues, $operator = '='): mixed
+    public function update(string $id, array $data): Model
     {
-        $where = [];
+        $model = $this->getById($id);
+        $model->update($data);
 
-        foreach ($attributesValues as $key => $arrayAttributeValue) {
-            $operator = count($arrayAttributeValue) == 3 ? $arrayAttributeValue[1] : $operator;
-            $where[] = [$arrayAttributeValue[0], $operator, $arrayAttributeValue[2]];
-        }
+        return $model->refresh();
+    }
 
-        return $this->model->where($where)->get();
+    public function getById(string $id): ?Model
+    {
+        return $this->model->where('id', $id)->first();
     }
 }

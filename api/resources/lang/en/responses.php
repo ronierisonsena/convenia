@@ -8,5 +8,6 @@ return [
     'collaborator' => [
         'created' => 'Staff created successfully.',
         'index' => 'Get collaborators.',
+        'updated' => 'Collaborator updated successfully.',
     ],
 ];
