@@ -20,7 +20,7 @@ class CollaboratorRepository extends BaseRepository
             ->where($filters)
             ->join('staff', 'staff.user_id', '=', 'users.id')
             ->where('staff.manager_id', $managerId)
-            ->get();
+            ->get(['users.*', 'staff.manager_id', 'staff.user_id']);
     }
 
     public function updateStaffByManagerId(int $managerId, array $data, int $collaboratorUserId): void

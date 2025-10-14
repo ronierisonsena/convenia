@@ -33,4 +33,9 @@ abstract class BaseRepository
     {
         return $this->model->where('id', $id)->first();
     }
+
+    public function insert(array $collaboratorsToImport): void
+    {
+        $this->model->insert($collaboratorsToImport);
+    }
 }

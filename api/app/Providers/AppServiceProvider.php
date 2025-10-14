@@ -29,17 +29,14 @@ class AppServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(CarbonInterval::months(1));
         Passport::enablePasswordGrant();
 
-        try {
-            if (! Schema::hasTable('user_types')) {
-                return;
-            }
-
-            $userTypesRepository = app()->make(UserTypeRepository::class);
-            $scopes = $userTypesRepository->model->all()->pluck('description', 'role')->toArray();
-
-            Passport::tokensCan($scopes);
-        } catch (Throwable $e) {
-            //
+        if (! Schema::hasTable('user_types')) {
+            return;
         }
+
+        $userTypesRepository = app()->make(UserTypeRepository::class);
+        $scopes = $userTypesRepository->model->all()->pluck('description', 'role')->toArray();
+
+        Passport::tokensCan($scopes);
+
     }
 }

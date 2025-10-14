@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckApiKey;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
+use Illuminate\Auth\AuthenticationException as AuthException;
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -21,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->append(CheckApiKey::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e, Request $request) {
@@ -31,8 +34,9 @@ return Application::configure(basePath: dirname(__DIR__))
                     $e instanceof RouteNotFoundException => [Response::HTTP_NOT_FOUND, 'Resource not found.'],
                     $e instanceof ValidationException => [Response::HTTP_UNPROCESSABLE_ENTITY, $e->errors()],
                     $e instanceof AuthenticationException => [Response::HTTP_FORBIDDEN, 'Unauthenticated or privileges missing.'],
+                    $e instanceof AuthException => [Response::HTTP_UNAUTHORIZED, 'Unauthenticated.'],
                     $e instanceof MissingScopeException,
-                    $e instanceof AccessDeniedHttpException => [Response::HTTP_FORBIDDEN, 'Privileges missing.'],
+                    $e instanceof AccessDeniedHttpException => [Response::HTTP_FORBIDDEN, $e->getMessage()],
                     default => [Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage()],
                 };
 

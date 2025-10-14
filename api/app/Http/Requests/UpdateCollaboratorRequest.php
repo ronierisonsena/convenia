@@ -77,7 +77,7 @@ class UpdateCollaboratorRequest extends FormRequest
 
         return [
             'name' => 'sometimes|string|max:255|min:5',
-            'email' => 'sometimes|string|email|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users',
             'password' => 'sometimes|string|min:6|max:150',
             'cpf' => [
                 'sometimes',

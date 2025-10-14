@@ -10,5 +10,7 @@ return [
         'index' => 'Get collaborators.',
         'updated' => 'Collaborator updated successfully.',
         'deleted' => 'Collaborator deleted successfully.',
+        'csv_not_found' => 'File not found.',
+        'importing_csv' => 'Processing CSV file, you will receive an email when job\'s done.',
     ],
 ];

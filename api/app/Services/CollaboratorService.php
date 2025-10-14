@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Http\Requests\StoreCollaboratorRequest;
+use App\Models\Staff;
 use App\Models\User;
 use App\Repositories\CollaboratorRepository;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Throwable;
 
 class CollaboratorService extends BaseService
 {
@@ -49,7 +53,6 @@ class CollaboratorService extends BaseService
      */
     public function update(array $data, User $collaboratorUser, User $loggedUser): ?User
     {
-        // TODO; check
         if (isset($data['cpf'])) {
             $data['cpf'] = $this->onlyNumbers(data_get($data, 'cpf'));
         }

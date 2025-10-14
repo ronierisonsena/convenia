@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Laravel\Passport\HasApiTokens;
+use Laravel\Passport\Passport;
 
 class User extends Authenticatable
 {
@@ -84,6 +86,11 @@ class User extends Authenticatable
      */
     public function createAccessToken()
     {
+        Log::error("DEBUG -> \t\tROLE: ". $this->type->role);
+        Log::error("DEBUG -> \t\tROLE: ". Passport::scopes());
+        Log::error("DEBUG -> \t\tROLE: ". Passport::hasScope($this->type->role));
         $this->newAccessToken = $this->createToken($this->id.'_token', [$this->type->role])->accessToken;
+        //dd($this->newAccessToken);
+        return $this->newAccessToken;
     }
 }

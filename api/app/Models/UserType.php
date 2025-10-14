@@ -13,6 +13,11 @@ class UserType extends Model
 
     public const TYPE_MANAGER = 2;
 
+    public const SCOPES = [
+        'manager' => 'managers',
+        'collaborator' => 'collaborator',
+    ];
+
     protected $table = 'user_types';
 
     protected $fillable = [

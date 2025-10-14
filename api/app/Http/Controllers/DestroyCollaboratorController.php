@@ -23,7 +23,15 @@ class DestroyCollaboratorController extends BaseController
      *     path="/api/v1/collaborator/{id}",
      *     tags={"Collaborator"},
      *     summary="Delete a collaborator",
-     *     security={{"bearer": {}}},
+     *     security={{"bearerAuth":{}, {"api_key": {}}}},
+     *
+     *     @OA\Parameter(
+     *         name="api-key",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         example="9cff43c8a441e76e2abf83c56ab0348f"
+     *     ),
      *
      *     @OA\Parameter(
      *          name="id",

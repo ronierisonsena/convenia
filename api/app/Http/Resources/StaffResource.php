@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -38,10 +39,10 @@ class StaffResource extends JsonResource
     {
         return [
             'user' => UserResource::make($this->resource->user)->setToken($this->newAccessToken),
-            'manager' => [
-                'name' => $this->resource->manager?->user->name,
-                'email' => $this->resource->manager?->user->email,
-            ],
+            'manager' => $this->resource->manager ? [
+                'name' => $this->resource->manager->user->name,
+                'email' => $this->resource->manager->user->email,
+            ] : null,
         ];
     }
 

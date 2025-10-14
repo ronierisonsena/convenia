@@ -38,7 +38,7 @@ class UserService extends BaseService
      */
     public function login(array $credentials): Model
     {
-        if (! Auth::attempt($credentials)) {
+        if (! auth('web')->attempt($credentials)) {
             throw new Exception('Invalid user or password');
         }
 

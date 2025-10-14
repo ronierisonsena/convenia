@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @OA\Schema(
  *     schema="UserResource",
  *     type="object",
- *     title="User",
+ *     title="User Resource",
  *     required={"name", "email", "password", "cpf", "city", "state"},
  *
  *     @OA\Property(
@@ -66,6 +66,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->resource->id,
             'name' => $this->resource->name,
             'email' => $this->resource->email,
             'cpf' => $this->resource->cpf,

@@ -15,14 +15,35 @@ use Throwable;
 
 /**
  * @OA\Info (
- *     title="Collaborators API",
+ *     title="Collaborators API - By Convenia ❤",
  *     version="1.0.0",
  *     description="API for managing collaborators"
  * )
  *
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="OAuth2",
+ *     description="Bearer token obtained from the login endpoint."
+ * ),
+ *
+ * @OA\SecurityScheme(
+ *     securityScheme="api_key",
+ *     type="apiKey",
+ *     in="header",
+ *     name="api-key",
+ *     description="API key for requests."
+ * )
+ *
  * @OA\Tag(
  *     name="Auth",
- *     description="Endpoints for user authentication"
+ *     description="Endpoints for user login, logout and me."
+ * ),
+ *
+ * @OA\Tag(
+ *     name="Collaborator",
+ *     description="Endpoints for create, update, get all, import and delete collaborators."
  * )
  */
 class AuthController extends BaseController
@@ -38,14 +59,22 @@ class AuthController extends BaseController
      *     description="Authenticate user and return user data with token.",
      *     tags={"Auth"},
      *
+     *     @OA\Parameter(
+     *         name="api-key",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         example="9cff43c8a441e76e2abf83c56ab0348f"
+     *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
      *
      *         @OA\JsonContent(
      *             required={"email", "password"},
      *
-     *             @OA\Property(property="email", type="string", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", example="secret123")
+     *             @OA\Property(property="email", type="string", example="manager@example.com"),
+     *             @OA\Property(property="password", type="string", example="123456")
      *         )
      *     ),
      *
@@ -87,7 +116,7 @@ class AuthController extends BaseController
                 ])
                 ->response()
                 ->setStatusCode(Response::HTTP_OK);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->saveExceptionLog($e);
 
             return response()->json([
@@ -103,7 +132,15 @@ class AuthController extends BaseController
      *     description="Revoke user token and logout.",
      *     operationId="logout",
      *     tags={"Auth"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{"bearerAuth":{}, {"api_key": {}}}},
+     *
+     *     @OA\Parameter(
+     *         name="api-key",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         example="9cff43c8a441e76e2abf83c56ab0348f"
+     *     ),
      *
      *     @OA\Response(
      *         response=200,
@@ -148,7 +185,15 @@ class AuthController extends BaseController
      *     summary="Get logged user",
      *     description="Return the authenticated user info.",
      *     tags={"Auth"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{"bearerAuth":{}, {"api_key": {}}}},
+     *
+     *     @OA\Parameter(
+     *         name="api-key",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         example="9cff43c8a441e76e2abf83c56ab0348f"
+     *     ),
      *
      *     @OA\Response(
      *         response=200,

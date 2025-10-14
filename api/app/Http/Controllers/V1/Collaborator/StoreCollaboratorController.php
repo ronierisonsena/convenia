@@ -26,7 +26,15 @@ class StoreCollaboratorController extends BaseController
      *     path="/api/v1/collaborator",
      *     tags={"Collaborator"},
      *     summary="Create a new collaborator",
-     *     security={{"bearer": {}}},
+     *     security={{"bearerAuth":{}, {"api_key": {}}}},
+     *
+     *     @OA\Parameter(
+     *         name="api-key",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         example="9cff43c8a441e76e2abf83c56ab0348f"
+     *     ),
      *
      *     @OA\RequestBody(
      *          required=true,

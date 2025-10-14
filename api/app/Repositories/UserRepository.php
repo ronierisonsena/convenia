@@ -12,4 +12,9 @@ class UserRepository extends BaseRepository
     public function __construct(
         protected User $model,
     ) {}
+
+    public function getCollaboratorsIdsByEmail(array $emails)
+    {
+        return $this->model->whereIn('email', $emails)->pluck('id')->toArray();
+    }
 }
