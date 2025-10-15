@@ -28,10 +28,10 @@ Antes de começar, certifique-se de ter instalado:
 
 ## Subindo o sistema
 
-Clone o repositório:
-
 ```bash
-docker-compose up -d
+git clone git clone git@github.com:ronierisonsena/convenia.git
+cd convenia
+docker-compose up -d --build
 ```
 
 Usuario para testes:
@@ -39,3 +39,9 @@ Usuario para testes:
 Login: manager@example.com
 
 senha: 123456
+
+## Rodando a fila
+
+```bash
+docker exec convenia_swoole_api php artisan queue:work 
+```

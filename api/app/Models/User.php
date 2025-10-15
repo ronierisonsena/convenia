@@ -86,11 +86,7 @@ class User extends Authenticatable
      */
     public function createAccessToken()
     {
-        Log::error("DEBUG -> \t\tROLE: ". $this->type->role);
-        Log::error("DEBUG -> \t\tROLE: ". Passport::scopes());
-        Log::error("DEBUG -> \t\tROLE: ". Passport::hasScope($this->type->role));
         $this->newAccessToken = $this->createToken($this->id.'_token', [$this->type->role])->accessToken;
-        //dd($this->newAccessToken);
         return $this->newAccessToken;
     }
 }
