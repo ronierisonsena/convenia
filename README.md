@@ -1,10 +1,10 @@
-# 🚀 API Collaborator - By Convenia ❤
+# API Collaborator - By Convenia ❤
 
 API RESTful desenvolvida em **Laravel** com autenticação via **Laravel Passport**, documentação **Swagger**, e ambiente totalmente conteinerizado via **Docker**.
 
 ---
 
-## 🧩 Tecnologias utilizadas
+## Tecnologias utilizadas
 
 - **PHP 8.3** + **Laravel 11 + Swoole**
 - **Docker** e **Docker Compose**
