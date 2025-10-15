@@ -6,7 +6,7 @@ API RESTful desenvolvida em **Laravel** com autenticação via **Laravel Passpor
 
 ## Tecnologias utilizadas
 
-- **PHP 8.3** + **Laravel 11 + Swoole**
+- **PHP 8.3** + **Laravel 12 + Swoole**
 - **Docker** e **Docker Compose**
 - **MySQL 8**
 - **Laravel Passport** (OAuth2)
