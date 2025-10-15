@@ -45,6 +45,8 @@ senha: 123456
 ## Rodando a fila
 **Passo necessario para importar o CSV e enviar email**.
 
+Para receber o email ao importar o CSV, deve-se criar um colaborador com email valido, ou atualizar o email do usuario acima. 
+
 ```bash
 docker exec convenia_swoole_api php artisan queue:work 
 ```
