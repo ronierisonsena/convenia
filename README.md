@@ -54,7 +54,7 @@ docker exec convenia_swoole_api php artisan queue:work
 
 ## Observações
 - Nao tive muito tempo para desenvolver, pois estava de mudança para outra cidade, por isso nao pude caprichar um pouco mais, criando os `Contracts` e `Providers` para fazer a inversao da dependencia.
-- Poderia ter criado a classe `Collaborator` para estender `Staff` e `Manager` dela
+- Poderia ter criado a classe `Collaborator` para estender `Staff` e `Manager` dela e talvez colocado cache em algumas query's
 
 Obrigado pela oportunidade!
 ❤
