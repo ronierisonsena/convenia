@@ -34,6 +34,8 @@ cd convenia
 docker-compose up -d --build
 ```
 
+Documentação: http://localhost:8000/api/documentation
+
 Usuario para testes:
 
 Login: manager@example.com
@@ -41,7 +43,15 @@ Login: manager@example.com
 senha: 123456
 
 ## Rodando a fila
+**Passo necessario para importar o CSV e enviar email**.
 
 ```bash
 docker exec convenia_swoole_api php artisan queue:work 
 ```
+
+## Observações
+- Nao tive muito tempo para desenvolver, pois estava de mudança para outra cidade, por isso nao pude caprichar um pouco mais, criando os `Contracts` e `Providers` para fazer a inversao da dependencia.
+- Poderia ter criado a classe `Collaborator` para estender `Staff` e `Manager` dela
+
+Obrigado pela oportunidade!
+❤
