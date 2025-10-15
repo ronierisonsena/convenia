@@ -6,16 +6,16 @@ API RESTful desenvolvida em **Laravel** com autenticação via **Laravel Passpor
 
 ## 🧩 Tecnologias utilizadas
 
-- 🐘 **PHP 8.3** + **Laravel 11**
-- 🐳 **Docker** e **Docker Compose**
-- 🗄️ **MySQL 8**
-- 🔐 **Laravel Passport** (OAuth2)
-- 📘 **Swagger (OpenAPI)** para documentação
-- 🧪 **PHPUnit** para testes automatizados
+- **PHP 8.3** + **Laravel 11 + Swoole**
+- **Docker** e **Docker Compose**
+- **MySQL 8**
+- **Laravel Passport** (OAuth2)
+- **Swagger (OpenAPI)** para documentação
+- **PHPUnit** para testes automatizados
 
 ---
 
-## ⚙️ Pré-requisitos
+## Pré-requisitos
 
 Antes de começar, certifique-se de ter instalado:
 
@@ -26,7 +26,7 @@ Antes de começar, certifique-se de ter instalado:
 
 ---
 
-## 🏗️ Instalação e Setup
+## Subindo o sistema
 
 Clone o repositório:
 

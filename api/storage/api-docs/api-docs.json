@@ -1,0 +1,848 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Collaborators API - By Convenia ❤",
+        "description": "API for managing collaborators",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/collaborator/{id}": {
+            "put": {
+                "tags": [
+                    "Collaborator"
+                ],
+                "summary": "Update a collaborator",
+                "operationId": "19783b79b95b7f39baf5762278ce8d86",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCollaboratorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Collaborator updated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "properties": {
+                                                "cpf": {
+                                                    "type": "object",
+                                                    "example": "Invalid CPF. Acceptable formats are: 000.000.000-00 | 00000000000"
+                                                },
+                                                "email": {
+                                                    "type": "object",
+                                                    "example": "The email has already been taken."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error processing request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Collaborator"
+                ],
+                "summary": "Delete a collaborator",
+                "operationId": "f4854e30422745ead2ad722f23250c00",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Collaborator deleted."
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error processing request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/v1/collaborator/import/csv": {
+            "post": {
+                "tags": [
+                    "Collaborator"
+                ],
+                "summary": "Import collaborators from CSV.",
+                "description": "All collaborators created has the six first numbers of their cpf like password ",
+                "operationId": "14ddb790faea2a26c50f73cafc45d4b3",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "CSV file to import.",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Processing the file CSV received.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Processing CSV file, you will receive an email when job's done."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "object",
+                                            "example": {
+                                                "file": [
+                                                    "File has to be CSV."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error processing request.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error processing request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User login",
+                "description": "Authenticate user and return user data with token.",
+                "operationId": "45bde25b97150f3e175435ff049d7ed1",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "manager@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "Unauthenticated or privileges missing."
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User logout",
+                "description": "Revoke user token and logout.",
+                "operationId": "logout",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged off!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/v1/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get logged user",
+                "description": "Return the authenticated user info.",
+                "operationId": "5f227de8b9922c960bfbf4c71aec3258",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User information retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/v1/collaborators": {
+            "get": {
+                "tags": [
+                    "Collaborator"
+                ],
+                "summary": "Get all collaborators",
+                "operationId": "8e8704ae23f4e219f1a9f3643364255e",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "schema": {
+                            "type": "string",
+                            "example": "Ted Rubber"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "",
+                        "schema": {
+                            "type": "string",
+                            "example": "test@email.com"
+                        }
+                    },
+                    {
+                        "name": "cpf",
+                        "in": "query",
+                        "description": "",
+                        "schema": {
+                            "type": "string",
+                            "example": "111.222.333-45"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "",
+                        "schema": {
+                            "type": "string",
+                            "example": "Belo Horizonte"
+                        }
+                    },
+                    {
+                        "name": "state",
+                        "in": "query",
+                        "description": "",
+                        "schema": {
+                            "type": "string",
+                            "example": "Minas Gerais"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Accepted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "object",
+                                                    "example": "Max 150 caracteres."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error processing request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/v1/collaborator": {
+            "post": {
+                "tags": [
+                    "Collaborator"
+                ],
+                "summary": "Create a new collaborator",
+                "operationId": "5a51ad78c08017fd66ec99bc230fa170",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "9cff43c8a441e76e2abf83c56ab0348f"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCollaboratorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "properties": {
+                                                "cpf": {
+                                                    "type": "object",
+                                                    "example": "Invalid CPF. Acceptable formats are: 000.000.000-00 | 00000000000"
+                                                },
+                                                "email": {
+                                                    "type": "object",
+                                                    "example": "The email has already been taken."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error processing request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [],
+                        "0": {
+                            "api_key": []
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "GetCollaboratorRequest": {
+                "title": "Collaborator Request",
+                "type": "object"
+            },
+            "ImportCsvCollaboratorRequest": {
+                "title": "Import CSV Collaborator Request",
+                "description": "Request body for uploading a CSV file containing collaborator data.",
+                "properties": {
+                    "file": {
+                        "description": "The CSV file to upload.",
+                        "type": "string",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreCollaboratorRequest": {
+                "title": "Store Collaborator Request",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "cpf",
+                    "city",
+                    "state"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Ted Rubber"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "test@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "MySuperSecretPassword"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "111.222.333-45"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Belo Horizonte"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "Minas Gerais"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCollaboratorRequest": {
+                "title": "Update Collaborator Request",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Ted Rubber"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "test@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "MySuperSecretPassword"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "111.222.333-45"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Belo Horizonte"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "Minas Gerais"
+                    }
+                },
+                "type": "object"
+            },
+            "ManagerResource": {
+                "title": "Staff Manager Resource",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "collaborators": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "collaborator": {
+                                    "$ref": "#/components/schemas/StaffResource"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "StaffResource": {
+                "title": "Staff Resource",
+                "description": "Resource for staff",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "manager": {
+                        "$ref": "#/components/schemas/ManagerResource"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "User Resource",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "cpf",
+                    "city",
+                    "state"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Ted Rubber"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "test@email.com"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "11122233345"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Belo Horizonte"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "Minas Gerais"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2025-10-11 23:10:55"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "staff"
+                    },
+                    "token": {
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMTqnuDiu0JopjcqprRNz_wqmEWWwTGIVwFuZKf-1x9KkEpmMIJiM"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Bearer token obtained from the login endpoint.",
+                "bearerFormat": "OAuth2",
+                "scheme": "bearer"
+            },
+            "api_key": {
+                "type": "apiKey",
+                "description": "API key for requests.",
+                "name": "api-key",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Endpoints for user login, logout and me."
+        },
+        {
+            "name": "Collaborator",
+            "description": "Endpoints for create, update, get all, import and delete collaborators."
+        }
+    ]
+}

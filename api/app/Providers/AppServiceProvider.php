@@ -2,13 +2,11 @@
 
 namespace App\Providers;
 
-use App\Repositories\UserTypeRepository;
+use App\Models\UserType;
 use Carbon\CarbonInterval;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use L5Swagger\L5SwaggerServiceProvider;
 use Laravel\Passport\Passport;
-use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,15 +26,6 @@ class AppServiceProvider extends ServiceProvider
         Passport::personalAccessTokensExpireIn(CarbonInterval::months(1));
         Passport::tokensExpireIn(CarbonInterval::months(1));
         Passport::enablePasswordGrant();
-
-        if (! Schema::hasTable('user_types')) {
-            return;
-        }
-
-        $userTypesRepository = app()->make(UserTypeRepository::class);
-        $scopes = $userTypesRepository->model->all()->pluck('description', 'role')->toArray();
-
-        Passport::tokensCan($scopes);
-
+        Passport::tokensCan(UserType::SCOPES);
     }
 }
