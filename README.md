@@ -31,7 +31,8 @@ Antes de começar, certifique-se de ter instalado:
 ```bash
 git clone git clone git@github.com:ronierisonsena/convenia.git
 cd convenia
-docker-compose up -d --build
+docker-compose build
+docker-compose up -d
 ```
 
 Documentação: http://localhost:8000/api/documentation
