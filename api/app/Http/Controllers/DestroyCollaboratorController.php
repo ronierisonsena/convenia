@@ -67,7 +67,7 @@ class DestroyCollaboratorController extends BaseController
 
             return response()
                 ->json(['message' => __('responses.collaborator.deleted')])
-                ->setStatusCode(Response::HTTP_CREATED);
+                ->setStatusCode(Response::HTTP_OK);
         } catch (Throwable $e) {
             $this->saveExceptionLog($e);
 

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
@@ -95,31 +96,31 @@ class CollaboratorTest extends TestCase
     }
 
     /** @test */
-    public function manager_can_update_collaborator()
+    public function manager_can_delete_collaborator()
     {
-        $managerUser = $this->actingAsManager();
+        $user = $this->actingAsManager();
 
         $collaborator = User::factory()->create([
             'user_type_id' => UserType::TYPE_STAFF,
-            'name' => 'Old Name',
         ]);
 
         Staff::factory()->create([
             'user_id' => $collaborator->id,
-            'manager_id' => $managerUser->id,
+            'manager_id' => $user->manager->id,
         ]);
 
-        $payload = [
-            'name' => 'Updated Name',
-            'city' => 'collaborator name',
-        ];
-
-        $response = $this->putJson("/api/v1/collaborator/{$collaborator->id}", $payload, [
+        $response = $this->deleteJson("/api/v1/collaborator/{$user->id}", [], [
             'api-key' => env('API_KEY'),
         ]);
 
-        $response->assertStatus(201)
-            ->assertJsonPath('data.name', 'Updated Name');
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+        ])
+        && $this->assertNotNull(
+            DB::table('users')->where('id', $user->id)->value('deleted_at')
+        );
+
     }
 
     /** @test */

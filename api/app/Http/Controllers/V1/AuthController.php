@@ -120,7 +120,7 @@ class AuthController extends BaseController
             $this->saveExceptionLog($e);
 
             return response()->json([
-                'message' => __('responses.error_on_request'),
+                'message' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
