@@ -32,3 +32,10 @@ Clone o repositório:
 
 ```bash
 docker-compose up -d
+```
+
+Usuario para testes:
+
+Login: manager@example.com
+
+senha: 123456
