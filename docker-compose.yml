@@ -22,12 +22,12 @@ services:
       composer install && \
       cp .env.example .env && \
       php artisan l5-swagger:generate && \
+      php artisan migrate:status | grep -q 'Ran' || php artisan migrate:fresh --seed && \
       php artisan passport:client --personal && \
       php artisan key:generate && \
       if [ ! -f storage/oauth-private.key ]; then
         php artisan passport:keys
       fi && \
-      php artisan migrate:status | grep -q 'Ran' || php artisan migrate:fresh --seed && \
       npm i && npm install chokidar && \
       php artisan octane:start --server=swoole --host=0.0.0.0 --port=8000 --watch
       "
