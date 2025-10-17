@@ -29,7 +29,7 @@ Antes de começar, certifique-se de ter instalado:
 ## Subindo o sistema
 
 ```bash
-git clone git clone git@github.com:ronierisonsena/convenia.git
+git clone https://github.com/ronierisonsena/convenia.git
 cd convenia
 docker-compose build
 docker-compose up -d
