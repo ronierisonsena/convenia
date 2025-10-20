@@ -14,8 +14,8 @@ class UserType extends Model
     public const TYPE_MANAGER = 2;
 
     public const SCOPES = [
-        'manager' => 'managers',
-        'collaborator' => 'collaborator',
+        'manager' => 'managers collaborators',
+        'staff' => 'staff collaborators',
     ];
 
     protected $table = 'user_types';
