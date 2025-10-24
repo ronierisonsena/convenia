@@ -4,22 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ImportCsvCollaboratorRequest;
 use App\Jobs\ProcessCsvCollaboratorJob;
-use App\Services\CsvCollaboratorService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class ImportCsvCollaboratorController extends BaseController
 {
-    /**
-     * ImportCsvCollaboratorController constructor.
-     */
-    public function __construct(
-        private CsvCollaboratorService $csvCollaboratorService,
-    ) {}
-
     /**
      * @OA\Post(
      *     path="/api/v1/collaborator/import/csv",
@@ -32,6 +22,7 @@ class ImportCsvCollaboratorController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),
@@ -106,6 +97,8 @@ class ImportCsvCollaboratorController extends BaseController
     public function __invoke(ImportCsvCollaboratorRequest $request): JsonResponse
     {
         try {
+            $this->validatePolicy(policyMethod: 'importCsv', collaborator: null, request: $request);
+
             $path = $request->file('file')->store('collaborator/csv');
 
             ProcessCsvCollaboratorJob::dispatch($path, auth()->user());
@@ -118,11 +111,9 @@ class ImportCsvCollaboratorController extends BaseController
         } catch (Throwable $e) {
             $this->saveExceptionLog($e);
 
-            DB::rollBack();
-
             return response()->json([
                 'message' => __('responses.error_on_request'),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

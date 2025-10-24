@@ -2,43 +2,16 @@
 
 namespace App\Services;
 
-use App\Http\Requests\StoreCollaboratorRequest;
-use App\Models\Staff;
-use App\Models\UserType;
+use App\Jobs\InsertCollaboratorsChunkJob;
 use App\Repositories\StaffRepository;
 use App\Repositories\UserRepository;
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Throwable;
 
 class CsvCollaboratorService extends BaseService
 {
-    private const COLLABORATOR_CSV_POSSIBLE_COLUMNS = [
-        'name' => [
-            'name',
-            'nome',
-            'colaborador',
-            'collaborator',
-        ],
-        'email' => [
-            'email',
-            'mail',
-        ],
-        'cpf' => [
-            'cpf',
-            'document',
-        ],
-        'city' => [
-            'city',
-            'cidade',
-        ],
-        'state' => [
-            'state',
-            'estado',
-            'uf',
-        ],
-    ];
+    private const CHUNK_SIZE = 200;
 
     /**
      * UserService constructor.
@@ -51,63 +24,52 @@ class CsvCollaboratorService extends BaseService
     /**
      * Import collaborators from CSV
      */
-    public function importCsv(string $filePath, int $managerId)
+    public function importCsv(string $filePath, int $managerId): array
     {
         if (! file_exists($filePath)) {
             throw new Exception(__('responses.collaborator.csv_not_found'));
         }
 
-        $request = new StoreCollaboratorRequest;
-        $collaboratorsToImport = [];
+        $csvRows = $this->getCollectRowsFromCsvFile($filePath);
         $collaboratorsNotImported = [];
 
-        $file = fopen($filePath, 'r');
-
-        $columns = fgetcsv($file, 0, ','); // CSV header
-
-        while (($data = fgetcsv($file, 0, ',')) !== false) {
-            $rowData = array_combine($columns, $data);
-
-            /** Try associate columns and format collaborator data */
-            $collaborator = $this->formatDataToImport($rowData);
-
-            try {
-                /** Validate collaborator data before import */
-                $validator = Validator($collaborator, $request->rules(), $request->messages());
-                $validator->validate();
-
-                $collaboratorsToImport[] = $collaborator;
-            } catch (Throwable $e) {
-                $collaboratorsNotImported[] = ['name' => $rowData['name'], 'reasons' => $validator->errors()->all()];
-            }
-        }
-
-        fclose($file);
-
-        DB::beginTransaction();
-
-        /** Insert collaborators */
-        $this->userRepository->insert($collaboratorsToImport);
-
-        /** Get all ID's from inserted collaborators */
-        $collaboratorsIds = $this->userRepository->getCollaboratorsIdsByEmail(
-            collect($collaboratorsToImport)->pluck('email')->toArray()
-        );
-
-        $staff = $this->formatStaffManagerId($collaboratorsIds, $managerId);
-
-        /** Insert manager for those staff's */
-        $this->staffRepository->insert($staff);
-
-        DB::commit();
+        $csvRows->chunk(self::CHUNK_SIZE)->each(function (Collection $chunk) use (
+            $managerId,
+            &$collaboratorsNotImported
+        ) {
+            InsertCollaboratorsChunkJob::dispatch($chunk, $managerId);
+        });
 
         return $collaboratorsNotImported;
     }
 
     /**
+     * Insert Collaborators
+     */
+    public function insertCollaborators(array $collaboratorsToImport, int $managerId): void
+    {
+        [$userRepository, $staffRepository] = [$this->userRepository, $this->staffRepository];
+
+        DB::transaction(function () use ($collaboratorsToImport, $managerId, $userRepository, $staffRepository) {
+            /** Insert collaborators */
+            $userRepository->insert($collaboratorsToImport);
+
+            /** Get all ID's from inserted collaborators */
+            $collaboratorsIds = $userRepository->getCollaboratorsIdsByEmail(
+                collect($collaboratorsToImport)->pluck('email')->toArray()
+            );
+
+            $staff = $this->formatStaffData($collaboratorsIds, $managerId);
+
+            /** Insert manager for those staff's */
+            $staffRepository->insert($staff);
+        });
+    }
+
+    /**
      * Format Staff data
      */
-    public function formatStaffManagerId(array $collaboratorsIds, int $managerId): array
+    private function formatStaffData(array $collaboratorsIds, int $managerId): array
     {
         return array_map(function ($id) use ($managerId) {
             return [
@@ -119,40 +81,20 @@ class CsvCollaboratorService extends BaseService
         }, $collaboratorsIds);
     }
 
-    /**
-     * Format collaborator data to import
-     *
-     * @return array
-     */
-    public function formatDataToImport(array $rowData)
+    private function getCollectRowsFromCsvFile(string $filePath): Collection
     {
-        foreach ($rowData as $key => $value) {
-            if (in_array($key, self::COLLABORATOR_CSV_POSSIBLE_COLUMNS['name'])) {
-                $collaborator['name'] = $value;
-            }
+        $rows = collect();
 
-            if (in_array($key, self::COLLABORATOR_CSV_POSSIBLE_COLUMNS['email'])) {
-                $collaborator['email'] = $value;
-            }
+        $file = fopen($filePath, 'r');
 
-            if (in_array($key, self::COLLABORATOR_CSV_POSSIBLE_COLUMNS['cpf'])) {
-                $collaborator['cpf'] = $this->onlyNumbers($value);
-            }
+        $columns = fgetcsv($file, 0, ','); // CSV header
 
-            if (in_array($key, self::COLLABORATOR_CSV_POSSIBLE_COLUMNS['city'])) {
-                $collaborator['city'] = $value;
-            }
-
-            if (in_array($key, self::COLLABORATOR_CSV_POSSIBLE_COLUMNS['state'])) {
-                $collaborator['state'] = $value;
-            }
+        while (($data = fgetcsv($file, 0, ',')) !== false) {
+            $rows->push(array_combine($columns, $data));
         }
 
-        $collaborator['password'] = Hash::make(substr($collaborator['cpf'], 0, 6));
-        $collaborator['user_type_id'] = UserType::TYPE_STAFF;
-        $collaborator['created_at'] = now();
-        $collaborator['updated_at'] = now();
+        fclose($file);
 
-        return $collaborator;
+        return $rows;
     }
 }

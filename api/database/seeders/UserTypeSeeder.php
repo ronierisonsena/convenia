@@ -24,7 +24,7 @@ class UserTypeSeeder extends Seeder
                 'id' => UserType::TYPE_MANAGER,
                 'name' => 'Manager',
                 'role' => 'manager',
-                'description' => 'Staff manager',
+                'description' => 'Manager People',
             ],
         ]);
     }

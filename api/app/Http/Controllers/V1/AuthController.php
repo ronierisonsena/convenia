@@ -27,7 +27,6 @@ use Throwable;
  *     bearerFormat="OAuth2",
  *     description="Bearer token obtained from the login endpoint."
  * ),
- *
  * @OA\SecurityScheme(
  *     securityScheme="api_key",
  *     type="apiKey",
@@ -40,7 +39,6 @@ use Throwable;
  *     name="Auth",
  *     description="Endpoints for user login, logout and me."
  * ),
- *
  * @OA\Tag(
  *     name="Collaborator",
  *     description="Endpoints for create, update, get all, import and delete collaborators."
@@ -63,6 +61,7 @@ class AuthController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),
@@ -138,6 +137,7 @@ class AuthController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),
@@ -191,6 +191,7 @@ class AuthController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),

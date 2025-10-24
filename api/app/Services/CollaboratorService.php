@@ -2,14 +2,10 @@
 
 namespace App\Services;
 
-use App\Http\Requests\StoreCollaboratorRequest;
-use App\Models\Staff;
 use App\Models\User;
 use App\Repositories\CollaboratorRepository;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Throwable;
 
 class CollaboratorService extends BaseService
 {

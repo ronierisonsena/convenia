@@ -36,6 +36,6 @@ abstract class BaseRepository
 
     public function insert(array $collaboratorsToImport): void
     {
-        $this->model->insert($collaboratorsToImport);
+        $this->model->insertOrIgnore($collaboratorsToImport);
     }
 }

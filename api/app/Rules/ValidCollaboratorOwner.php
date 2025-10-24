@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use App\Models\User;
 use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidCollaboratorOwner implements ValidationRule
@@ -34,6 +35,6 @@ class ValidCollaboratorOwner implements ValidationRule
             return;
         }
 
-        $fail(__('Resource not found.'));
+        throw new AuthorizationException('Forbidden');
     }
 }

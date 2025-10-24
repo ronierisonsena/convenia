@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckApiKey;
+use Illuminate\Auth\AuthenticationException as AuthException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,8 +14,6 @@ use Laravel\Passport\Exceptions\MissingScopeException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-
-use Illuminate\Auth\AuthenticationException as AuthException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
