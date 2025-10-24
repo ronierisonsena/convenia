@@ -42,6 +42,11 @@ use Illuminate\Foundation\Http\FormRequest;
  *          type="string",
  *          example="Minas Gerais"
  *     ),
+ *     @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          example="staff"
+ *     ),
  * )
  */
 class UpdateCollaboratorRequest extends FormRequest

@@ -6,7 +6,7 @@ return [
     'logout' => 'Logged out.',
 
     'collaborator' => [
-        'created' => 'Staff created successfully.',
+        'created' => 'Collaborator created successfully.',
         'index' => 'Get collaborators.',
         'updated' => 'Collaborator updated successfully.',
         'deleted' => 'Collaborator deleted successfully.',

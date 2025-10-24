@@ -43,6 +43,8 @@ Login: manager@example.com
 
 senha: 123456
 
+Obs: Para criar usuario do tipo "manager" enviar `type="manager"` no payload de StoreCollaborator 
+
 ## Rodando a fila
 **Passo necessario para importar o CSV e enviar email**.
 
