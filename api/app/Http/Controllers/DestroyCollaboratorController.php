@@ -29,6 +29,7 @@ class DestroyCollaboratorController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),
@@ -63,6 +64,8 @@ class DestroyCollaboratorController extends BaseController
     public function __invoke(DestroyCollaboratorRequest $request, User $collaborator): JsonResponse
     {
         try {
+            $this->validatePolicy('destroy', $collaborator, $request);
+
             $this->collaboratorService->destroy($collaborator);
 
             return response()

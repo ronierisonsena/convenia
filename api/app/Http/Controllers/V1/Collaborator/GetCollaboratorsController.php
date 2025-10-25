@@ -30,6 +30,7 @@ class GetCollaboratorsController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),

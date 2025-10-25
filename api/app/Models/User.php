@@ -3,16 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Policies\CollaboratorPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Log;
 use Laravel\Passport\HasApiTokens;
-use Laravel\Passport\Passport;
 
+#[UsePolicy(CollaboratorPolicy::class)]
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -87,6 +88,7 @@ class User extends Authenticatable
     public function createAccessToken()
     {
         $this->newAccessToken = $this->createToken($this->id.'_token', [$this->type->role])->accessToken;
+
         return $this->newAccessToken;
     }
 }

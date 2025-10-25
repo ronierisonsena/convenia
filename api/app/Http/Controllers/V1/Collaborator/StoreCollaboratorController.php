@@ -6,7 +6,6 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\StoreCollaboratorRequest;
 use App\Http\Resources\ManagerResource;
 use App\Http\Resources\StaffResource;
-use App\Http\Resources\UserResource;
 use App\Services\CollaboratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -32,6 +31,7 @@ class StoreCollaboratorController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),
@@ -96,6 +96,8 @@ class StoreCollaboratorController extends BaseController
     public function __invoke(StoreCollaboratorRequest $request): JsonResponse
     {
         try {
+            $this->validatePolicy(policyMethod: 'create', request: $request, collaborator: null);
+
             $data = $request->validated();
             $user = auth()->user();
             $data['manager_id'] = $user?->manager?->id;
@@ -115,7 +117,7 @@ class StoreCollaboratorController extends BaseController
 
             return response()->json([
                 'message' => __('responses.error_on_request'),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

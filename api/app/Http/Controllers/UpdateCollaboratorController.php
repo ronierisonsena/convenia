@@ -31,6 +31,7 @@ class UpdateCollaboratorController extends BaseController
      *         name="api-key",
      *         in="header",
      *         required=true,
+     *
      *         @OA\Schema(type="string"),
      *         example="9cff43c8a441e76e2abf83c56ab0348f"
      *     ),
@@ -97,6 +98,8 @@ class UpdateCollaboratorController extends BaseController
     public function __invoke(UpdateCollaboratorRequest $request, User $collaborator): JsonResponse
     {
         try {
+            $this->validatePolicy('update', $collaborator, $request);
+
             $user = auth()->user();
             $data = Arr::except($request->validated(), ['collaborator']);
             $userCollaborator = $this->collaboratorService->update($data, $collaborator, $user);
@@ -109,7 +112,7 @@ class UpdateCollaboratorController extends BaseController
 
             return response()->json([
                 'message' => __('responses.error_on_request'),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
